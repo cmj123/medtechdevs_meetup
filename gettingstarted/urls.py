@@ -5,6 +5,8 @@ admin.autodiscover()
 
 import hello.views
 
+import sensors
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'gettingstarted.views.home', name='home'),
@@ -13,5 +15,5 @@ urlpatterns = patterns('',
     url(r'^$', hello.views.index, name='index'),
     url(r'^db', hello.views.db, name='db'),
     url(r'^admin/', include(admin.site.urls)),
-
+    url(r'^sensors/', include('sensors.urls')),
 )
