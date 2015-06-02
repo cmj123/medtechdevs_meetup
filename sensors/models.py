@@ -2,10 +2,14 @@ from django.db import models
 
 # Create your models here.
 class Sequence(models.Model):
-    pass 
+    def __unicode__(self):
+        return '%s:%d' % (self._meta.model_name, self.pk)
 
 class Parameter(models.Model):
     name = models.CharField(max_length=64)
+    def __unicode__(self):
+        return self.name if self.name else '%s:%d' % (self._meta.model_name, self.pk)
+
 
 class Measurement(models.Model):
     parameter = models.ForeignKey(Parameter)

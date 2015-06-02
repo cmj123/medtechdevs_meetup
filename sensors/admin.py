@@ -3,13 +3,29 @@ from django.contrib import admin
 from .models import *
 
 class SequenceAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'pk',
+        )
 
 class ParameterAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'pk',
+        'name',
+        )
 
 class MeasurementAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'pk',
+        'parameter',
+        'sequence',
+        'timestamp_start',
+        'value',
+        )
+
+    list_filter = (
+        'parameter',
+
+        )
 
 for i in [
     'Sequence', 
