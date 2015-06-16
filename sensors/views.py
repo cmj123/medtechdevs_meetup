@@ -1,6 +1,11 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets
+from rest_framework_bulk import (
+    BulkListSerializer, 
+    BulkSerializerMixin,
+    ListBulkCreateUpdateDestroyAPIView, 
+)
 
 
 from .serializers import *
@@ -18,5 +23,10 @@ class SequenceViewSet(viewsets.ModelViewSet):
 class ParameterViewSet(viewsets.ModelViewSet):
     serializer_class = ParameterSerializer
     queryset = Parameter.objects.all()
+
+class MeasurementListView(ListBulkCreateUpdateDestroyAPIView):
+    serializer_class = MeasurementSerializer
+    queryset = Measurement.objects.all()
+
 
 # Create your views here.

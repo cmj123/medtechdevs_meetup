@@ -11,7 +11,10 @@ router = DefaultRouter()
 router.register(r'measurement', MeasurementViewSet)
 router.register(r'sequence',    SequenceViewSet)
 router.register(r'parameter',   ParameterViewSet)
+#router.register(r'measurement_bulk', MeasurementListView)
 
 urlpatterns = (
     url(r'api/v1.0/', include(router.urls)),
+    url(r'api/v1.0/measurement_bulk/', MeasurementListView.as_view())
+    # url
 )
