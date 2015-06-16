@@ -1,2 +1,3 @@
-Requires requests module use
+#required things
 pip install requests
+pip install tornado #simple web server
