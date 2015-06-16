@@ -3,6 +3,7 @@ import json
 
 
 URL = 'http://localhost:8000/sensors/api/v1.0/measurement_bulk/'
+URL = 'http://copd.herokuapp.com/sensors/api/v1.0/measurement_bulk/'
 
 data = [ 
     {
@@ -23,6 +24,10 @@ data = [
 
 print json.dumps(data)
 
-r = requests.post(URL, data=json.dumps(data), headers={'Content-type':'application/json'})
+r = requests.post(
+    URL, 
+    data=json.dumps(data), 
+    headers={'Content-type':'application/json'}
+)
 
 print r, r.content
