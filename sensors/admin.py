@@ -5,6 +5,7 @@ from .models import *
 class SequenceAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
+        'patient',
         )
 
 class ParameterAdmin(admin.ModelAdmin):
