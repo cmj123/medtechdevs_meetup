@@ -89,6 +89,9 @@ interface APISensorResponseElem {
     value: string;
 };
 
+const API_HOST = 'https://copd.herokuapp.com';
+const API_BASE = `${API_HOST}/sensors/api/v1.0`;
+
 function getSensorData(sensorname: string): Promise<number[]> {
     switch (sensorname) {
     case "HR":
@@ -97,7 +100,7 @@ function getSensorData(sensorname: string): Promise<number[]> {
     default:
         throw new Error(`Unknown sensorname: ${sensorname}`);
     }
-    const url = `http://copd.herokuapp.com/sensors/api/v1.0/measurement_by_time/?patient_id=1;sensor_name=${sensorname};start_time=201506220000;end_time=20150622220010`;
+    const url = `${API_BASE}/measurement_by_time/?patient_id=1;sensor_name=${sensorname};start_time=201506220000;end_time=20150622220010`;
     return new Promise<number[]>(function (good, bad) {
         const xhr = new XMLHttpRequest();
         xhr.responseType = "json";
