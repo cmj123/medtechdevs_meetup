@@ -5,9 +5,23 @@
   <meta charset=utf-8>
   <title>FlO₂</title>
 
+<style>
+#error {
+  color: yellow;
+  text-align: center;
+  background-color: red;
+  border: thin solid yellow;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+
 </head>
 
 <body>
+  <p id=error class=hidden></p>
   <div style="width: 50%">
     <div>
       <canvas id=mychart width=200 height=200></canvas>

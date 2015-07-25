@@ -17,15 +17,20 @@ all: js html assets
 js: $(JS_TARGETS)
 
 medtech_api/static/%.js: medtech_api/static-src/%.ts
-	tsc --out "$@" "$<"
+	mkdir -p "$(@D)"
+	mkdir -p medtech_api/build
+	tsc -t ES6 --out "medtech_api/build/$*.js" "$<"
+	babel "medtech_api/build/$*.js" -o "$@"
 
 html: $(HTML_TARGETS)
 
 medtech_api/static/%.html: medtech_api/static-src/%.html
+	mkdir -p "$(@D)"
 	cp "$<" "$@"
 
 assets: $(ASSETS_TARGETS)
 
 $(ASSETS_TARGETS): medtech_api/static/%: medtech_api/assets/%
+	mkdir -p "$(@D)"
 	cp "$<" "$@"
 

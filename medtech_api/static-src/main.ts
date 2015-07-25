@@ -27,11 +27,15 @@ interface dataSet {
     pointBorderWidth: number;
 }
 
-function medtech_main() {
-    var canvas = <HTMLCanvasElement>document.getElementById('mychart');
-    var ctx = canvas.getContext('2d');
+interface CanvasJSScatterData {
+    datasets: dataSet[];
+}
 
-    var scatterChartData = {
+function scatterData(o2data: number[], heartbpm: number[]): CanvasJSScatterData {
+    if (o2data.length !== heartbpm.length) {
+        throw new Error("Length of two sensor data must be equal");
+    }
+    return {
         datasets: <dataSet[]>[{
             label: 'O₂',
             backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -39,13 +43,7 @@ function medtech_main() {
             pointBorderColor: '#000',
             pointBackgroundColor: 'rgba(0, 100, 0, 0.4)',
             pointBorderWidth: 1,
-            data: [
-                {x: 0.1, y: 0.1},
-                {x: 0.2, y: 0.2},
-                {x: 0.3, y: 0.3},
-                {x: 0.4, y: 0.4},
-                {x: 0.5, y: 0.5}
-            ],
+            data: o2data.map((val, i) => ({x: i, y: val})),
         },
         {
             label: 'bpm',
@@ -54,16 +52,17 @@ function medtech_main() {
             pointBorderColor: '#000',
             pointBackgroundColor: 'rgba(0, 100, 0, 0.4)',
             pointBorderWidth: 1,
-            data: [
-                {x: 0.1, y: 0.5},
-                {x: 0.2, y: 0.4},
-                {x: 0.3, y: 0.3},
-                {x: 0.4, y: 0.2},
-                {x: 0.5, y: 0.1}
-            ],
+            data: heartbpm.map((val, i) => ({x: i, y: val})),
         }],
     };
-    var options = {
+}
+
+function plotData(o2data: number[], heartbpm: number[]): void {
+    const canvas = <HTMLCanvasElement>document.getElementById('mychart');
+    const ctx = canvas.getContext('2d');
+
+    const scatterChartData = scatterData(o2data, heartbpm);
+    const options = {
         bezierCurve: false,
         pointDot: false,
     }
@@ -71,7 +70,7 @@ function medtech_main() {
      * This uses the undocumented upcoming Scatter plot from Chart.js v2. The Chart.js repository has
      * a sample using this chart type under /samples/scatter.html. 
      */
-    var chart = Chart.Scatter(ctx, {
+    let chart = Chart.Scatter(ctx, {
         data: scatterChartData,
         options: {
             scales: {
@@ -83,5 +82,54 @@ function medtech_main() {
                 }],
             }
         }
+    });
+}
+
+interface APISensorResponseElem {
+    value: string;
+};
+
+function getSensorData(sensorname: string): Promise<number[]> {
+    switch (sensorname) {
+    case "HR":
+    case "O2":
+        break;
+    default:
+        throw new Error(`Unknown sensorname: ${sensorname}`);
+    }
+    const url = `http://copd.herokuapp.com/sensors/api/v1.0/measurement_by_time/?patient_id=1;sensor_name=${sensorname};start_time=201506220000;end_time=20150622220010`;
+    return new Promise<number[]>(function (good, bad) {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = "json";
+        xhr.onload = function () {
+            const xhr: XMLHttpRequest = this;
+            if (xhr.status !== 200) {
+                bad(new Error(`Unexpected status code in XHR request: ${xhr.status}`));
+                return;
+            }
+            const responseobj = <APISensorResponseElem[]>xhr.response;
+            good(responseobj.map(x => JSON.parse(x.value)));
+        };
+        xhr.onerror = function (e) {
+            const xhr: XMLHttpRequest = this;
+            bad(new Error("An error occurred during the XHR request"));
+        };
+        xhr.open("GET", url);
+        xhr.send();
+    });
+}
+
+function reportError(err) {
+    console.error(err);
+    const errnode = document.getElementById('error');
+    errnode.textContent = ''+err;
+    errnode.classList.remove('hidden');
+}
+
+function medtech_main() {
+    Promise.all(["O2", "HR"].map(getSensorData)).then(function ([o2, hr]) {
+        plotData(o2, hr);
+    }, function (err) {
+        reportError(err);
     });
 }

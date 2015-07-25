@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "babel": "^5.8.5",
+    "typescript": "^1.5.3"
+  }
+}
